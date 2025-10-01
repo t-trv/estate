@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
 
 export const register = async (req, res) => {
     const { username, email, password } = req.body;
@@ -84,6 +82,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(
             {
                 id: user.id,
+                isAdmin: false,
             },
             process.env.JWT_SECRET_KEY,
             { expiresIn: age }
@@ -111,6 +110,7 @@ export const login = async (req, res) => {
 
 export const logout = (req, res) => {
     try {
+        console.log('Logout user');
         res.clearCookie('token')
             .status(200)
             .json({ message: 'Logout successful' });

@@ -1,5 +1,6 @@
 import express from 'express';
 import authRouter from './routes/auth.route.js';
+import testRouter from './routes/test.route.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use('/api/auth', authRouter);
+app.use('/api/test', testRouter);
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
