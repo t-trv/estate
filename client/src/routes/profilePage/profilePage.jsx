@@ -4,6 +4,7 @@ import List from '../../components/list/List';
 import apiRequest from '../../lib/apiRequest';
 import './profilePage.scss';
 import { useAuthContext } from '../../context/AuthContext';
+import { randomAvatar } from '../../lib/randomAvatar';
 
 function ProfilePage() {
     const navigate = useNavigate();
@@ -27,16 +28,15 @@ function ProfilePage() {
                     <div className="wrapper">
                         <div className="title">
                             <h1>User Information</h1>
-                            <button>Update Profile</button>
+                            <button onClick={() => navigate('/profile/update')}>
+                                Update Profile
+                            </button>
                         </div>
                         <div className="info">
                             <span>
                                 Avatar:
                                 <img
-                                    src={
-                                        currentUser.avatar ||
-                                        'https://avatar.iran.liara.run/username?username=Viet+Nam&size=32'
-                                    }
+                                    src={currentUser.avatar || randomAvatar()}
                                     alt=""
                                 />
                             </span>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './navbar.scss';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
+import { randomAvatar } from '../../lib/randomAvatar';
 
 function Navbar() {
     const [open, setOpen] = useState(false);
@@ -23,10 +24,7 @@ function Navbar() {
                 {currentUser ? (
                     <div className="user">
                         <img
-                            src={
-                                currentUser.avatar ||
-                                'https://avatar.iran.liara.run/username?username=Viet+Nam&size=32'
-                            }
+                            src={currentUser.avatar || randomAvatar()}
                             alt=""
                         />
                         <span>{currentUser.username}</span>
