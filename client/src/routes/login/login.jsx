@@ -10,6 +10,7 @@ function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    setError("");
     setIsLoading(true);
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -23,7 +24,11 @@ function Login() {
         password,
       });
 
-      navigate("/");
+      console.log(res);
+
+      localStorage.setItem("user", JSON.stringify(res.data));
+
+      // navigate("/");
     } catch (err) {
       console.log(err);
       setError(err.response.data.message);

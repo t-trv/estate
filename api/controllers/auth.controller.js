@@ -61,7 +61,7 @@ export const login = async (req, res) => {
         // Kiểm tra xem user có tồn tại hay không
         const user = await prisma.user.findUnique({
             where: {
-                username,
+                username: username,
             },
         });
 
@@ -89,6 +89,8 @@ export const login = async (req, res) => {
             { expiresIn: age }
         );
 
+        const { password: hashedPassword, ...userInfo } = user;
+
         console.log(`User logged in: ${user.username}`);
 
         res.cookie('token', token, {
@@ -97,7 +99,7 @@ export const login = async (req, res) => {
             maxAge: age,
         })
             .status(200)
-            .json({ message: 'Login successful' });
+            .json(userInfo);
     } catch (error) {
         console.error('Login user error:', error);
 

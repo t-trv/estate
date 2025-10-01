@@ -5,10 +5,13 @@ import { useState } from "react";
 
 function Register() {
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    setError("");
+    setIsLoading(true);
     e.preventDefault();
     const formData = new FormData(e.target);
 
@@ -43,7 +46,7 @@ function Register() {
             type="password"
             placeholder="Password"
           />
-          <button>Register</button>
+          <button disabled={isLoading}>Register</button>
           {error && <span>{error}</span>}
           <Link to="/login">Do you have an account?</Link>
         </form>
