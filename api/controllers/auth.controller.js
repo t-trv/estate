@@ -30,7 +30,6 @@ export const register = async (req, res) => {
 
         //   Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log('Hashed password:', hashedPassword);
 
         //   Tạo một người dùng mới rồi lưu vào database
         const newUser = await prisma.user.create({
@@ -42,6 +41,7 @@ export const register = async (req, res) => {
             },
         });
 
+        console.log(`New user created: ${newUser.username}`);
         res.status(201).json({
             message: 'User created successfully',
         });
@@ -88,6 +88,8 @@ export const login = async (req, res) => {
             process.env.JWT_SECRET_KEY,
             { expiresIn: age }
         );
+
+        console.log(`User logged in: ${user.username}`);
 
         res.cookie('token', token, {
             httpOnly: true,
