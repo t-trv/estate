@@ -5,15 +5,15 @@ import apiRequest from '../../lib/apiRequest';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { Cloudinary } from '@cloudinary/url-gen';
-import { AdvancedImage, responsive, placeholder } from '@cloudinary/react';
 import UploadWidget from '../../components/uploadWidget/uploadWidget';
 
 function ProfileUpdatePage() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { currentUser, updateUser } = useAuthContext();
-    const [avatar, setAvatar] = useState(currentUser.avatar);
+    const [avatar, setAvatar] = useState([]);
+
+    console.log(avatar);
 
     // set up cloudinary react widget
     const cloudName = 'dejjk78pl';
@@ -55,7 +55,7 @@ function ProfileUpdatePage() {
                 username,
                 email,
                 password,
-                avatar,
+                avatar: avatar[avatar.length - 1],
             });
 
             updateUser(res.data);
@@ -103,12 +103,20 @@ function ProfileUpdatePage() {
                 </form>
             </div>
             <div className="sideContainer">
-                <img src={avatar || randomAvatar()} alt="" className="avatar" />
+                <img
+                    src={
+                        avatar[avatar.length - 1] ||
+                        currentUser.avatar ||
+                        randomAvatar()
+                    }
+                    alt=""
+                    className="avatar"
+                />
 
                 <UploadWidget
                     uwConfig={uwConfig}
                     setPublicId={setPublicId}
-                    setAvatar={setAvatar}
+                    setState={setAvatar}
                 />
 
                 {publicId && (

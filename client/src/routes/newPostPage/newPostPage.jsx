@@ -1,18 +1,47 @@
 import './newPostPage.scss';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import apiRequest from '../../lib/apiRequest';
+import UploadWidget from '../../components/uploadWidget/uploadWidget';
+import { useNavigate } from 'react-router-dom';
 
 function NewPostPage() {
     const [value, setValue] = useState('');
     const [error, setError] = useState('');
     const [images, setImages] = useState([]);
 
+    const navigate = useNavigate();
+
+    // set up cloudinary react widget
+    const cloudName = 'dejjk78pl';
+    const uploadPreset = 'estate';
+    const [publicId, setPublicId] = useState('');
+
+    // Memoize uwConfig để tránh re-render
+    const uwConfig = useMemo(
+        () => ({
+            cloudName,
+            uploadPreset,
+            // Uncomment and modify as needed:
+            // cropping: true,
+            // showAdvancedOptions: true,
+            // sources: ['local', 'url'],
+            multiple: true,
+            folder: 'posts',
+            maxFileSize: 2000000,
+            // tags: ['users', 'profile'],
+            // context: { alt: 'user_uploaded' },
+            // clientAllowedFormats: ['images'],
+            // maxImageFileSize: 2000000,
+            // maxImageWidth: 2000,
+            // theme: 'purple',
+        }),
+        [cloudName, uploadPreset]
+    );
+
     const handleSubmit = async e => {
         e.preventDefault();
-
-        console.log(error);
 
         const formData = new FormData(e.target);
 
@@ -52,6 +81,7 @@ function NewPostPage() {
             });
 
             console.log('Post created successfully:', res.data);
+            navigate('/' + res.data.id);
         } catch (error) {
             console.log('Error creating post:', error);
             setError(error.response?.data?.message || 'Failed to create post');
@@ -83,8 +113,8 @@ function NewPostPage() {
                                 name="desc"
                                 placeholder="Description"
                                 theme="snow"
-                                onChange={setValue}
                                 value={value}
+                                onChange={setValue}
                             />
                         </div>
 
@@ -204,7 +234,16 @@ function NewPostPage() {
                     </form>
                 </div>
             </div>
-            <div className="sideContainer"></div>
+            <div className="sideContainer">
+                {images.map(image => (
+                    <img key={image} src={image} alt="" />
+                ))}
+                <UploadWidget
+                    uwConfig={uwConfig}
+                    setPublicId={setPublicId}
+                    setState={setImages}
+                />
+            </div>
         </div>
     );
 }
