@@ -41,6 +41,8 @@ function Navbar() {
                         </a>
                     </>
                 )}
+
+                {/* Navbar for mobile */}
                 <div className="menuIcon">
                     <img
                         src="/menu.png"

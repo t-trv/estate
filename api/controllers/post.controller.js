@@ -19,6 +19,16 @@ export const getPost = async (req, res) => {
             where: {
                 id: id,
             },
+            include: {
+                postDetail: true,
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        avatar: true,
+                    },
+                },
+            },
         });
         res.status(200).json(post);
     } catch (error) {
@@ -28,14 +38,23 @@ export const getPost = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-    const body = req.body;
+    const { postData, postDetail } = req.body;
     const tokenUserId = req.userId;
 
     try {
+        if (!tokenUserId) {
+            return res
+                .status(401)
+                .json({ message: 'Missing or invalid user token' });
+        }
+
         const newPost = await prisma.post.create({
             data: {
-                ...body,
+                ...postData,
                 userId: tokenUserId,
+                postDetail: {
+                    create: postDetail,
+                },
             },
         });
 
