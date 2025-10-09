@@ -1,28 +1,57 @@
 import prisma from '../lib/prisma.js';
 
 export const getPosts = async (req, res) => {
-    const { city, type, property, bedroom, bathroom, minPrice, maxPrice } =
-        req.query;
+    const query = req.query;
 
     try {
+        // Build where clause dynamically - only filter when values exist
+        const whereClause = {};
+
+        if (query.city && query.city.trim() !== '') {
+            whereClause.city = query.city;
+        }
+
+        if (query.type && query.type.trim() !== '') {
+            whereClause.type = query.type;
+        }
+
+        if (query.property && query.property.trim() !== '') {
+            whereClause.property = query.property;
+        }
+
+        if (query.bedroom && query.bedroom.trim() !== '') {
+            whereClause.bedroom = parseInt(query.bedroom);
+        }
+
+        // Price filter
+        const priceFilter = {};
+        if (
+            query.minPrice &&
+            query.minPrice.trim() !== '' &&
+            parseInt(query.minPrice) > 0
+        ) {
+            priceFilter.gte = parseInt(query.minPrice);
+        }
+        if (
+            query.maxPrice &&
+            query.maxPrice.trim() !== '' &&
+            parseInt(query.maxPrice) > 0
+        ) {
+            priceFilter.lte = parseInt(query.maxPrice);
+        }
+
+        if (Object.keys(priceFilter).length > 0) {
+            whereClause.price = priceFilter;
+        }
+
         const posts = await prisma.post.findMany({
-            where: {
-                city: city || undefined,
-                type: type || undefined,
-                property: property || undefined,
-                bedroom: bedroom ? parseInt(bedroom) : undefined,
-                bathroom: bathroom ? parseInt(bathroom) : undefined,
-                price: {
-                    gte: minPrice ? parseInt(minPrice) : undefined,
-                    lte: maxPrice ? parseInt(maxPrice) : undefined,
-                },
-            },
+            where: whereClause,
             orderBy: {
                 createdAt: 'desc',
             },
         });
 
-        res.status(200).json(posts);
+        res.status(200).json({ data: posts });
     } catch (error) {
         console.error('getPosts error:', error);
         res.status(500).json({ message: 'Failed to get posts' });
